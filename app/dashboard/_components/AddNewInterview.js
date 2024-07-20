@@ -38,56 +38,54 @@ const AddNewInterview = () => {
         e.preventDefault();
         // console.log(jobPosition,jobDescription,jobExperience)
 
-        const inputPrompt = `Job position: ${jobPosition}, Job Description: ${jobDescription}, Years of Experience: ${jobExperience}, Depends on Job Position, Job Description and Years of Experience give us ${process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT} Interview questions along with answer in JSON format,  Give us an array of objects contain question and answer field on JSON,Make sure each object have question and answer field. Data must be in this format:
+        const inputPrompt = `Job Position: ${jobPosition}, Job Description: ${jobDescription}, Years of experience: ${jobExperience}
+
+          Based on above info, give me five interview questions with answers in json format.
+
+          E.g - [
         {
-          "question": "Your question here",
-          "answer": "Your answer here"
-        }`;
+          "question": "",
+          "answer": ""
+        },
+        {
+          "question": "",
+          "answer": ""
+        },
+        {
+          "question": "",
+          "answer": ""
+        },
+        {
+          "question": "",
+          "answer": ""
+        },
+        {
+          "question": "",
+          "answer": ""
+        }
+        ]
+          Give question and answer as field in json. Note: don't give me anything else not even comments.`;
 
         const result = await chatSession.sendMessage(inputPrompt)
-        console.log("Result : ",result.response.text())
+        // console.log("Result : ",result.response.text())
 
-        const mockJsonResp = result.response
-        .text()
-        .replace("```json", "")
+        const MockResponse = result.response
+          .text()
+          .replace("```json", "")
+          .replace("```", "");
 
-        let arr= "";
-        for(let i=0;i<mockJsonResp.length;i++){
-          if(mockJsonResp[i] === '`'  &&  mockJsonResp[i+1] === '`'  &&  mockJsonResp[i+2] === '`'){
-            break;
-          }
-          else{
-            arr += mockJsonResp[i]
-          }
-        }
-
-        console.log("arr: ",arr)
-
-        function escapeHtmlEntities(str) {
-          const entities = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&apos;'
-          };
-        
-          // Replace each character with its HTML entity
-          return str.replace(/[&<>"']/g, char => entities[char]);
-        }
-
-        // let jsonString = escapeHtmlEntities(arr);
-        // console.log("JSON STRING :",jsonString);
+          console.log("Mock Response ",MockResponse)
 
 
         setLoading(false)
-        // setJsonResponse(jsonString)
+        setJsonResponse(MockResponse)
+        let jsonString = MockResponse
 
-        if(arr){
+        if(jsonString){
             const res = await db.insert(MockInterview)
           .values({
             mockId: uuidv4(),
-            jsonMockResp: arr,
+            jsonMockResp: jsonString,
             jobPosition: jobPosition,
             jobDesc: jobDescription,
             jobExperience: jobExperience,
