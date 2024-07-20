@@ -46,10 +46,30 @@ const AddNewInterview = () => {
 
         const result = await chatSession.sendMessage(inputPrompt)
         console.log("Result : ",result.response.text())
-        let resultText =  result.response.text()
-        resultText = resultText.replace('```json','')
-        let arr = resultText.split('```')[0]
-        console.log(arr)
+
+        const mockJsonResp = result.response
+        .text()
+        .replace("```json", "")
+        .replace("```", "");
+
+        // console.log("MockJsonResp ",mockJsonResp)
+
+        // let resultText =  result.response.text()
+        // resultText = resultText.replace('```json','')
+        // let arr = resultText.split('```')[0]
+        // console.log(arr)
+        let arr= "";
+        for(let i=0;i<mockJsonResp.length;i++){
+          if(mockJsonResp[i] === ']'){
+            arr += mockJsonResp[i];
+            break;
+          }
+          else{
+            arr += mockJsonResp[i]
+          }
+        }
+        console.log("arr: ",arr)
+
         let jsonString = JSON.parse(arr)
         console.log(jsonString )
         setLoading(false)
