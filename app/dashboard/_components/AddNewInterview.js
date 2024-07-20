@@ -50,36 +50,44 @@ const AddNewInterview = () => {
         const mockJsonResp = result.response
         .text()
         .replace("```json", "")
-        .replace("```", "");
 
-        // console.log("MockJsonResp ",mockJsonResp)
-
-        // let resultText =  result.response.text()
-        // resultText = resultText.replace('```json','')
-        // let arr = resultText.split('```')[0]
-        // console.log(arr)
         let arr= "";
         for(let i=0;i<mockJsonResp.length;i++){
-          if(mockJsonResp[i] === ']'){
-            arr += mockJsonResp[i];
+          if(mockJsonResp[i] === '`'  &&  mockJsonResp[i+1] === '`'  &&  mockJsonResp[i+2] === '`'){
             break;
           }
           else{
             arr += mockJsonResp[i]
           }
         }
+
         console.log("arr: ",arr)
 
-        let jsonString = JSON.parse(arr)
-        console.log(jsonString )
-        setLoading(false)
-        setJsonResponse(jsonString)
+        function escapeHtmlEntities(str) {
+          const entities = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&apos;'
+          };
+        
+          // Replace each character with its HTML entity
+          return str.replace(/[&<>"']/g, char => entities[char]);
+        }
 
-        if(jsonString){
+        // let jsonString = escapeHtmlEntities(arr);
+        // console.log("JSON STRING :",jsonString);
+
+
+        setLoading(false)
+        // setJsonResponse(jsonString)
+
+        if(arr){
             const res = await db.insert(MockInterview)
           .values({
             mockId: uuidv4(),
-            jsonMockResp: JSON.stringify(jsonString),
+            jsonMockResp: arr,
             jobPosition: jobPosition,
             jobDesc: jobDescription,
             jobExperience: jobExperience,
@@ -101,7 +109,6 @@ const AddNewInterview = () => {
     }
 
 
-    // 
   return (
     <div>
     <div className="p-10 border rounded-lg bg-secondary hover:scale-105 hover:shadow-md cursor-pointer transition-all"

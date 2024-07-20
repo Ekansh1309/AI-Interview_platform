@@ -19,7 +19,7 @@ const StartInterview = ({params}) => {
       .from(MockInterview)
       .where(eq(MockInterview.mockId, params.interviewId));
 
-      console.log(result)
+      console.log("Start Get Interview Details ", result)
 
     const jsonMockResp = JSON.parse(result[0].jsonMockResp);
     console.log("jsonMockResp ", jsonMockResp);
